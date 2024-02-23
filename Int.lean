@@ -14,13 +14,12 @@ theorem add_sub_eq_sub_add {a b:Int} : a + (-b) = a - b := rfl
 theorem succ_neg_inj {a b:Nat} : negSucc a = negSucc b ↔ a = b := ⟨negSucc.inj,λh↦by rw[h]⟩
 theorem neg_neg (a:Int) : -(-a) = a := by
   cases a
+  try rw[←negOfNat_mean,←negSucc_mean]
   case ofNat p =>
     cases p
-    case zero => rfl
-    case succ p' =>
-      rw[←negOfNat_mean,←negSucc_mean]
-      rfl
+    all_goals rfl
   rfl
+theorem neg_inj {a b:Int} : -a = -b ↔ a = b := ⟨λh↦by rw[←neg_neg a,←neg_neg b,h],λh↦by rw[h]⟩
 --==theorem-of-add==--
 theorem add_zero (a:Int) : a + 0 = a := by
   cases a
