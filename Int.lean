@@ -37,22 +37,17 @@ theorem add_comm {a b:Int} : a + b = b + a := by
 --==theorem-of-sub==--
 theorem neg_comm {a b:Int} : -a-b = -b-a := by simp[←add_sub_eq_sub_add,add_comm]
 theorem sub_triple_swap {a b:Int} : a-b=(-b)-(-a) := by simp[←add_sub_eq_sub_add,neg_neg,add_comm]
-theorem add_sub_selfL {a b:Nat} : subNatNat (a+b) a = b := by
+theorem subNatNat_add_left {a b:Nat} : subNatNat (a+b) a = b := by
   unfold subNatNat
   rw[Nat.sub_eq_zero_of_le,Nat.add_sub_cancel_left]
   exact Nat.le_add_right a b
-theorem add_sub_selfR {a b:Nat} : subNatNat (a+b) b = a := by
+theorem subNatNat_add_right {a b:Nat} : subNatNat (a+b) b = a := by
   unfold subNatNat
   rw[Nat.sub_eq_zero_of_le,Nat.add_sub_cancel]
   exact Nat.le_add_left b a
-/--theorem add_sub_selfL_ge_R {a b c:Nat}(h:a+c>b+c) : subNatNat (a+c) (b+c) = subNatNat a b := by
+theorem subNatNat_add_add {a b c:Nat} : subNatNat (a+c) (b+c) = subNatNat a b := by
   unfold subNatNat
-  rw[Nat.add_sub_add_right]
-  have h' : a > b := by
-    apply Nat.lt_sub_of_add_lt at h
-    rw[Nat.add_sub_cancel] at h
-    exact h
-  sorry-/
+  repeat rw[Nat.add_sub_add_right]
 --==theorem-of-mul==--
 theorem mul_zero (a:Int) : a * 0 = 0 := by
   cases a
