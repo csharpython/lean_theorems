@@ -20,17 +20,43 @@ theorem neg_neg (a:Int) : -(-a) = a := by
     case succ p' =>
       rw[←negOfNat_mean,←negSucc_mean]
       rfl
-  case negSucc n => rfl
+  rfl
 --==theorem-of-add==--
-theorem Zadd_zero (a:Int) : a + 0 = a := by
+theorem add_zero (a:Int) : a + 0 = a := by
   cases a
   all_goals rfl
-theorem Zzero_add (a:Int) : 0 + a = a := by
+theorem zero_add (a:Int) : 0 + a = a := by
   rw[←add_mean,←translate0]
   cases a
   all_goals simp[Int.add,subNatNat]
-theorem Zadd_comm {a b:Int} : a + b = b + a := by
+theorem add_comm {a b:Int} : a + b = b + a := by
   repeat rw[←add_mean]
   cases a
   all_goals cases b
   all_goals simp[Int.add,Nat.add_comm]
+--==theorem-of-sub==--
+theorem neg_comm {a b:Int} : -a-b = -b-a := by simp[←add_sub_eq_sub_add,add_comm]
+theorem sub_triple_swap {a b:Int} : a-b=(-b)-(-a) := by simp[←add_sub_eq_sub_add,neg_neg,add_comm]
+theorem add_sub_selfL {a b:Nat} : subNatNat (a+b) a = b := by
+  unfold subNatNat
+  rw[Nat.sub_eq_zero_of_le,Nat.add_sub_cancel_left]
+  exact Nat.le_add_right a b
+theorem add_sub_selfR {a b:Nat} : subNatNat (a+b) b = a := by
+  unfold subNatNat
+  rw[Nat.sub_eq_zero_of_le,Nat.add_sub_cancel]
+  exact Nat.le_add_left b a
+--==theorem-of-mul==--
+theorem mul_zero (a:Int) : a * 0 = 0 := by
+  cases a
+  all_goals rfl
+theorem zero_mul (a:Int) : 0 * a = 0 := by
+  rw[←mul_mean,←translate0]
+  cases a
+  all_goals simp[Int.mul]
+  rfl
+theorem mul_comm {a b:Int} : a * b = b * a := by
+  repeat rw[←mul_mean]
+  cases a
+  all_goals cases b
+  all_goals simp[Int.mul,Nat.mul_comm]
+--==end-of-this-file==--
