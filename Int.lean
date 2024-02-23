@@ -1,4 +1,5 @@
 import Lean
+import Mathlib.Tactic.ApplyAt
 namespace Int
 --==means==--
 theorem add_mean {a b:Int} : Int.add a b = a + b := rfl
@@ -44,6 +45,14 @@ theorem add_sub_selfR {a b:Nat} : subNatNat (a+b) b = a := by
   unfold subNatNat
   rw[Nat.sub_eq_zero_of_le,Nat.add_sub_cancel]
   exact Nat.le_add_left b a
+/--theorem add_sub_selfL_ge_R {a b c:Nat}(h:a+c>b+c) : subNatNat (a+c) (b+c) = subNatNat a b := by
+  unfold subNatNat
+  rw[Nat.add_sub_add_right]
+  have h' : a > b := by
+    apply Nat.lt_sub_of_add_lt at h
+    rw[Nat.add_sub_cancel] at h
+    exact h
+  sorry-/
 --==theorem-of-mul==--
 theorem mul_zero (a:Int) : a * 0 = 0 := by
   cases a
