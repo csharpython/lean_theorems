@@ -1,5 +1,4 @@
-import Lean
--- import Mathlib.Tactic.ApplyAt  This file doesn't need Mathlib!
+import Myfile.Nat.basic
 namespace Int
 --==Translators==--
 theorem add_mean {a b:Int} : Int.add a b = a + b := rfl
