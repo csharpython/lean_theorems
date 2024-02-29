@@ -1,3 +1,0 @@
-import Lean
-namespace Nat
---
