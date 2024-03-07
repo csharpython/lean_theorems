@@ -46,6 +46,12 @@ theorem sub_zero (a:Int) : a-0 = a := by rw[←add_sub_eq_sub_add,neg_zero,add_z
 theorem neg_comm {a b:Int} : -a-b = -b-a := by simp[←add_sub_eq_sub_add,add_comm]
 theorem sub_eq_neg_sub_neg {a b:Int} : a-b=(-b)-(-a) := by simp[←add_sub_eq_sub_add,neg_neg,add_comm]
 theorem subNatNat_zero (a:Nat) : subNatNat a 0 = a := by unfold subNatNat;simp
+theorem subNatNat_eq_sub {a b:Nat} : subNatNat a b = a - b := by
+  rw[←add_sub_eq_sub_add]
+  cases b
+  case zero => simp[int_zero_eq_nat_zero,neg_zero,add_zero,subNatNat_zero]
+  case succ b' => simp[←negOfNat_mean,←negSucc_mean];rfl
+
 theorem subNatNat_add_left {a b:Nat} : subNatNat (a+b) a = b := by
   unfold subNatNat
   rw[Nat.sub_eq_zero_of_le,Nat.add_sub_cancel_left]
@@ -64,19 +70,18 @@ theorem subNatNat_right_add {a b:Nat} : subNatNat a (b+a)= - b := by
     _ = subNatNat 0 b := subNatNat_add_add
     _ = -b := by cases b ; all_goals rfl
 
-/--theorem subNatNat_add {a b c:Nat} : subNatNat (a+b) c = a + subNatNat b c := by
+theorem subNatNat_add {a b c:Nat} : subNatNat (a+b) c = a + subNatNat b c := by
   cases b.lt_or_ge c
   case inl h =>
     cases Nat.exist_add_of_le (Nat.succ_le_of_lt h)
     case intro w h' =>
       simp[h',Nat.add_comm,Nat.succ_eq_add_one,←Nat.add_assoc]
-      rw[Nat.add_assoc,Nat.add_comm b,subNatNat_add_add,subNatNat_right_add]
-      done
+      rw[Nat.add_assoc,Nat.add_comm b,subNatNat_add_add,subNatNat_right_add,subNatNat_eq_sub,add_sub_eq_sub_add]
   case inr h =>
     unfold subNatNat
     simp[Nat.sub_eq_zero_of_le h,Nat.sub_eq_zero_of_le (Nat.le_trans h (Nat.le_add_left b a)),Nat.add_sub_assoc h]
     rfl
--/
+
 @[simp] theorem mul_zero (a:Int) : a * 0 = 0 := by cases a;all_goals rfl
 @[simp] theorem zero_mul (a:Int) : 0 * a = 0 := by
   rw[←mul_mean,←int_zero_eq_nat_zero,Int.mul]
