@@ -65,7 +65,7 @@ theorem subNatNat_sub {c:Nat}(h:b≤a) : subNatNat (a-b) c=subNatNat a (b+c) := 
     unfold subNatNat
     simp[Nat.sub_eq_zero_of_le h,Nat.sub_eq_zero_of_le (Nat.le_trans h (Nat.le_add_left b a)),Nat.add_sub_assoc h]
     rfl
-theorem subNatNat_add_neg {a b c:Nat} : subNatNat a b + negSucc c = subNatNat a (b + Nat.succ c) := by
+theorem subNatNat_add_negSucc {a b c:Nat} : subNatNat a b + negSucc c = subNatNat a (b + Nat.succ c) := by
   cases a.lt_or_ge b
   case inl h =>
     cases Nat.exist_add_of_le (Nat.succ_le_of_lt h)
@@ -78,27 +78,40 @@ theorem subNatNat_add_neg {a b c:Nat} : subNatNat a b + negSucc c = subNatNat a 
     case _ _ h' =>
       simp[h',Nat.add_comm b]
       conv => rhs;rw[←negOfNat_mean,←negSucc_def]
-/--theorem add_assoc {a b c:Int} : a + b + c = a + (b + c) :=
-  have OO_ : ∀(x y:Nat)(z:Int),ofNat x + ofNat y + z = ofNat x + (ofNat y + z) := by
-    intro _ _ z
-    cases z
-    case ofNat => simp[←add_def,Int.add,Nat.add_assoc]
-    case negSucc => simp[←add_def,Int.add]
-  have ONO : ∀(x y z:Nat),ofNat x + negSucc y + ofNat z = ofNat x + (negSucc y + ofNat z) := by
-    intro _ _ _
-    conv in negSucc _ + ofNat _ => rw[add_comm]
-    rw[←OO_]
-    conv in _ + ofNat _ => rw[add_comm,←OO_]
-    simp[add_comm]
+
+-- Road to add_assoc
+private theorem add_assoc₁ {a b:Nat}(c:Int) : ofNat a + ofNat b + c = ofNat a + (ofNat b+c) := by
+  cases c
+  case ofNat => simp[←add_def,Int.add,Nat.add_assoc]
+  case negSucc => simp[←add_def,Int.add]
+private theorem add_assoc₂ {x y z:Nat} : ofNat x + negSucc y + ofNat z = ofNat x + (negSucc y + ofNat z) := by
+  conv in negSucc _ + ofNat _ => rw[add_comm]
+  rw[←add_assoc₁]
+  conv in _ + ofNat _ => rw[add_comm,←add_assoc₁]
+  simp[add_comm]
+private theorem add_assoc₃ {a b c:Nat} : ofNat a + negSucc b + negSucc c = ofNat a + (negSucc b + negSucc c) := by
+  conv => rhs ; simp[←add_def,Int.add]
+  conv => lhs ; lhs ; rw[←add_def,Int.add] ; simp
+  conv => lhs ; rw[subNatNat_add_negSucc,Nat.add_succ,Nat.succ_add]
+theorem add_assoc {a b c:Int} : a + b + c = a + (b + c) :=
   match a,b,c with
-  | ofNat _,ofNat _,_ => OO_ _ _ _
-  | ofNat _,negSucc _,ofNat _ => ONO _ _ _
+  | ofNat _,ofNat _,c => add_assoc₁ c
+  | ofNat _,negSucc _,ofNat _ => add_assoc₂
   | negSucc _,ofNat _,ofNat _ => by
-    conv => rhs ; rw[add_comm,OO_,add_comm]
-    conv => lhs ; rw[add_comm,←ONO]
-  | ofNat a,negSucc b,negSucc c => sorry
+    conv => rhs ; rw[add_comm,add_assoc₁,add_comm]
+    conv => lhs ; rw[add_comm,←add_assoc₂]
+  | ofNat _,negSucc _,negSucc _ => add_assoc₃
   | negSucc _,negSucc _,negSucc _ => by simp[←add_def,Int.add,Nat.succ_eq_add_one];rw[Nat.add_right_comm _,←Nat.add_assoc,←Nat.add_assoc]
-  | _,_,_ => sorry-/
+  | negSucc _,negSucc _,ofNat _ => by
+    conv => lhs;rw[add_comm];rhs;rw[add_comm]
+    conv => rhs;rw[add_comm];lhs;rw[add_comm]
+    rw[add_assoc₃]
+  | negSucc _,ofNat _,negSucc _ => by
+    conv => lhs ; lhs ; rw[add_comm]
+    conv => rhs ; rw[add_comm]
+    simp[add_assoc₃]
+    simp[add_comm]
+--done!
 @[simp]theorem mul_zero (a:Int) : a * 0 = 0 := by cases a <;> rfl
 @[simp]theorem zero_mul (a:Int) : 0 * a = 0 := by
   rw[←mul_mean,Int.mul]
