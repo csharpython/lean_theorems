@@ -8,6 +8,7 @@ theorem add_comm (P Q:Prop) : P∧Q↔Q∧P := ⟨λh↦⟨h.right,h.left⟩,λh
 @[simp]theorem and_self_iff (P:Prop) : P∧P↔P := ⟨λh↦h.left,λh↦⟨h,h⟩⟩
 @[simp]theorem and_true_iff (P:Prop) : P∧True↔P := ⟨λh↦h.left,λh↦⟨h,trivial⟩⟩
 @[simp]theorem and_not_self_iff (P:Prop) : (P∧¬P)↔False := ⟨λh↦False.elim (h.right h.left),False.elim⟩
+@[simp]theorem and_false_iff (P:Prop) : (P∧False)↔False := ⟨λh↦False.elim h.right,False.elim⟩
 
 @[simp]theorem true_or_iff (P:Prop) : True∨P↔True := ⟨λ_↦trivial,λh↦Or.inl h⟩
 theorem or_comm (P Q:Prop) : P∨Q↔Q∨P := ⟨λh↦Or.elim h Or.inr Or.inl,λh↦Or.elim h Or.inr Or.inl⟩
