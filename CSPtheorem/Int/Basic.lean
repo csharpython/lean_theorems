@@ -8,16 +8,16 @@ theorem negOfNat_def (a:Nat) : negOfNat a = - ofNat a := rfl
 theorem negSucc_def (a:Nat) : negSucc a = negOfNat (Nat.succ a) := rfl
 @[simp]theorem int_zero_eq_nat_zero : ofNat 0 = 0 := rfl
 @[simp]theorem neg_zero : -0 = 0 := rfl
-theorem add_sub_eq_sub_add {a b:Int} : a + (-b) = a - b := rfl
+theorem add_neg_eq_sub {a b:Int} : a + (-b) = a - b := rfl
 
 --==Theorems==--
 @[simp]theorem neg_neg (a:Int) : -(-a) = a := by
   cases a <;> try rfl
-  case ofNat p => cases p <;> rfl
-@[simp]theorem negSucc_inj {a b:Nat} : negSucc a = negSucc b ↔ a = b := ⟨negSucc.inj,λh↦by rw[h]⟩
-@[simp]theorem neg_inj {a b:Int} : -a = -b ↔ a = b := ⟨λh↦by rw[←neg_neg a,←neg_neg b,h],λh↦by rw[h]⟩
+  case _ p => cases p <;> rfl
+theorem negSucc_inj {a b:Nat} : negSucc a = negSucc b ↔ a = b := ⟨negSucc.inj,λh↦by rw[h]⟩
+theorem neg_inj {a b:Int} : -a = -b ↔ a = b := ⟨λh↦by rw[←neg_neg a,←neg_neg b,h],λh↦by rw[h]⟩
 @[simp]theorem sub_self (a:Int) : a-a=0 := by
-  rw[←add_sub_eq_sub_add,←add_def]
+  rw[←add_neg_eq_sub,←add_def]
   match a with
   | 0 => simp[neg_zero,Int.add]
   | ofNat (Nat.succ _) => simp[←negOfNat_def,←negSucc_def,Int.add,subNatNat]
@@ -28,14 +28,14 @@ theorem add_sub_eq_sub_add {a b:Int} : a + (-b) = a - b := rfl
 @[simp]theorem zero_add (a:Int) : 0 + a = a := by cases a <;> simp[←add_def,Int.add,subNatNat]
 theorem add_comm {a b:Int} : a + b = b + a := by cases a <;> cases b <;> simp[←add_def,Int.add,Nat.add_comm]
 
-@[simp]theorem sub_zero (a:Int) : a-0 = a := by simp[←add_sub_eq_sub_add]
-@[simp]theorem zero_sub (a:Int) : 0-a = -a := by simp[←add_sub_eq_sub_add]
-theorem neg_comm {a b:Int} : -a-b = -b-a := by simp[←add_sub_eq_sub_add,add_comm]
-theorem sub_eq_neg_sub_neg {a b:Int} : a-b=(-b)-(-a) := by simp[←add_sub_eq_sub_add,add_comm]
+@[simp]theorem sub_zero (a:Int) : a-0 = a := by simp[←add_neg_eq_sub]
+@[simp]theorem zero_sub (a:Int) : 0-a = -a := by simp[←add_neg_eq_sub]
+theorem neg_comm {a b:Int} : -a-b = -b-a := by simp[←add_neg_eq_sub,add_comm]
+theorem sub_eq_neg_sub_neg {a b:Int} : a-b=(-b)-(-a) := by simp[←add_neg_eq_sub,add_comm]
 @[simp]theorem subNatNat_zero (a:Nat) : subNatNat a 0 = a := by simp[subNatNat]
 @[simp]theorem zero_subNatNat (a:Nat) : subNatNat 0 a = -a := by cases a <;> simp[subNatNat,←negOfNat_def,negSucc_def]
 @[simp]theorem subNatNat_self (a:Nat) : subNatNat a a = 0 := by simp[subNatNat]
-theorem subNatNat_eq_sub {a b:Nat} : subNatNat a b = a - b := by cases b <;> simp[←add_sub_eq_sub_add,←negOfNat_def,←negSucc_def] <;> rfl
+theorem subNatNat_eq_sub {a b:Nat} : subNatNat a b = a - b := by cases b <;> simp[←add_neg_eq_sub,←negOfNat_def,←negSucc_def] <;> rfl
 
 @[simp]theorem subNatNat_add_left {a b:Nat} : subNatNat (a+b) a = b := by
   rw[subNatNat,Nat.sub_eq_zero_of_le,Nat.add_sub_cancel_left]
@@ -50,43 +50,42 @@ theorem subNatNat_sub {c:Nat}(h:b≤a) : subNatNat (a-b) c=subNatNat a (b+c) := 
   calc _
     _ = subNatNat (0 + a) (b + a) := by rw[Nat.zero_add]
     _ = subNatNat 0 b := subNatNat_add_add
-    _ = -b := by cases b <;> rfl
+    _ = -b := zero_subNatNat _
 @[simp]theorem subNatNat_left_add {a b:Nat} : subNatNat a (a+b)= - b := by rw[Nat.add_comm];simp
 
-@[simp]theorem subNatNat_add {a b c:Nat} : subNatNat (a+b) c = a + subNatNat b c := by
+theorem subNatNat_add {a b c:Nat} : subNatNat (a+b) c = a + subNatNat b c := by
   cases b.lt_or_ge c
-  case inl h =>
+  case _ h =>
     cases Nat.exist_add_of_le (Nat.succ_le_of_lt h)
-    case intro _ h' =>
+    case _ _ h' =>
       simp[h',Nat.add_comm,Nat.succ_eq_add_one,←Nat.add_assoc]
-      rw[Nat.add_assoc,Nat.add_comm b,subNatNat_add_add,subNatNat_right_add,subNatNat_eq_sub,add_sub_eq_sub_add]
-  case inr h =>
+      rw[Nat.add_assoc,Nat.add_comm b,subNatNat_add_add,subNatNat_right_add,subNatNat_eq_sub,add_neg_eq_sub]
+  case _ h =>
     unfold subNatNat
     simp[Nat.sub_eq_zero_of_le h,Nat.sub_eq_zero_of_le (Nat.le_trans h (Nat.le_add_left b a)),Nat.add_sub_assoc h]
     rfl
 theorem subNatNat_add_negSucc {a b c:Nat} : subNatNat a b + negSucc c = subNatNat a (b + Nat.succ c) := by
   cases a.lt_or_ge b
-  case inl h =>
+  case _ h =>
     cases Nat.exist_add_of_le (Nat.succ_le_of_lt h)
     case _ _ h' =>
       rw[h',Nat.succ_eq_add_one,Nat.add_assoc,Nat.add_assoc]
       simp[Nat.one_add,←negOfNat_def,←negSucc_def,←add_def,Int.add,Nat.succ_add]
       rfl
-  case inr h =>
+  case _ h =>
     cases Nat.exist_add_of_le h
     case _ _ h' =>
-      simp[h',Nat.add_comm b]
+      simp[h',Nat.add_comm b,subNatNat_add]
       conv => rhs;rw[←negOfNat_def,←negSucc_def]
-
 -- Road to add_assoc
-private theorem add_assoc₁ {a b:Nat}(c:Int) : ofNat a + ofNat b + c = ofNat a + (ofNat b+c) := by cases c <;> simp[←add_def,Int.add,Nat.add_assoc]
+private theorem add_assoc₁ {a b:Nat}(c:Int) : ofNat a + ofNat b + c = ofNat a + (ofNat b+c) := by cases c <;> simp[←add_def,Int.add,Nat.add_assoc,subNatNat_add]
 private theorem add_assoc₂ {x y z:Nat} : ofNat x + negSucc y + ofNat z = ofNat x + (negSucc y + ofNat z) := by
   conv in negSucc _ + ofNat _ => rw[add_comm]
   rw[←add_assoc₁]
   conv in _ + ofNat _ => rw[add_comm,←add_assoc₁]
-  simp[add_comm]
+  simp only [add_comm]
 private theorem add_assoc₃ {a b c:Nat} : ofNat a + negSucc b + negSucc c = ofNat a + (negSucc b + negSucc c) := by
-  conv => rhs ; simp[←add_def,Int.add]
+  conv => rhs ; simp only [←add_def,Int.add]
   conv => lhs ; lhs ; rw[←add_def,Int.add] ; simp
   conv => lhs ; rw[subNatNat_add_negSucc,Nat.add_succ,Nat.succ_add]
 theorem add_assoc {a b c:Int} : a + b + c = a + (b + c) :=
@@ -110,5 +109,5 @@ theorem add_assoc {a b c:Int} : a + b + c = a + (b + c) :=
 --done!
 @[simp]theorem mul_zero (a:Int) : a * 0 = 0 := by cases a <;> rfl
 @[simp]theorem zero_mul (a:Int) : 0 * a = 0 := by cases a <;> simp[←mul_def,Int.mul,negOfNat_def]
-theorem mul_comm {a b:Int} : a * b = b * a := by cases a <;> cases b <;> simp[←mul_def,Int.mul,Nat.mul_comm]
-@[simp]theorem mul_one (a:Int) : a * 1 = a := by cases a <;> simp[←mul_def,Int.mul,←negSucc_def]
+theorem mul_comm {a b:Int} : a * b = b * a := by cases a <;> cases b <;> simp only [←mul_def,Int.mul,Nat.mul_comm]
+@[simp]theorem mul_one (a:Int) : a * 1 = a := by cases a <;> simp [←mul_def,Int.mul,←negSucc_def]
