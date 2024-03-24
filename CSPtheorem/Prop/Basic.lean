@@ -3,6 +3,7 @@ theorem symm (h:a=b) : b=a := by rw[h]
 theorem true' : True := trivial
 
 @[simp]theorem true_iff_iff (P:Prop) : (True↔P)↔P := ⟨λh↦h.mp true',λh↦⟨λ_↦h,λ_↦true'⟩⟩
+theorem iff_comm (P Q:Prop) : (P↔Q)↔(Q↔P):= ⟨λh↦⟨h.mpr,h.mp⟩,λh↦⟨h.mpr,h.mp⟩⟩
 
 @[simp]theorem not_not_iff (P:Prop) : ¬¬P↔P := ⟨λa↦Or.elim (Classical.em _) (λp↦p) λp↦False.elim (a p),λp h↦h p⟩
 theorem iff_not (P Q:Prop)(h:P ↔ Q) : ¬P↔¬Q := by rw[h];exact Iff.rfl
