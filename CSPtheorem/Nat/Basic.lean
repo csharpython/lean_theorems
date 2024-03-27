@@ -8,7 +8,7 @@ theorem exist_add_of_le {a b:Nat}(h:b≤a): ∃(n:Nat),a=b+n := by
   case _ => exists 0
   case _ _ _ h =>
     cases h;case _ w h=>
-      rw[succ_eq_add_one,h]
+      rw[h]
       exists w+1
 
 @[simp] theorem one_add {a:Nat} : 1 + a = succ a := by simp[Nat.add_comm]

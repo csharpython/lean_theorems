@@ -110,7 +110,7 @@ theorem add_assoc {a b c:Int} : a + b + c = a + (b + c) :=
     simp[add_comm]
   | negSucc _,negSucc _,negSucc _ => by simp[←add_def,Int.add,Nat.succ_eq_add_one];rw[Nat.add_right_comm _,←Nat.add_assoc,←Nat.add_assoc]
 --done!
-theorem neg_add {a b:Nat} : ((-a) + (-b)) = negOfNat (a+b) := by
+theorem neg_add {a b:Nat} : (-a) + (-b) = negOfNat (a+b) := by
   match a,b with
   | 0,_ => simp[negOfNat_def]
   | _,0 => simp[negOfNat_def]
