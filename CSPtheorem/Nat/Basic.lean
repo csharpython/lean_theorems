@@ -13,11 +13,11 @@ theorem exist_add_of_le {a b:Nat}(h:b≤a): ∃(n:Nat),a=b+n := by
 
 @[simp] theorem one_add {a:Nat} : 1 + a = succ a := by simp[Nat.add_comm]
 
-@[simp] theorem pow_one {a:Nat} : a ^ 1 = a := by rw[show 1 = Nat.succ 0 from rfl,pow_succ,pow_zero,Nat.one_mul]
+@[simp] theorem pow_one {a:Nat} : a ^ 1 = a := by rw[one_eq_succ_zero,pow_succ,pow_zero,Nat.one_mul]
 @[simp] theorem one_pow {a:Nat} : 1 ^ a = 1 := by
   induction a
   case _ => rfl
-  case _ _ dn => simp[pow_succ,dn]
+  case _ _ d => simp[pow_succ,d]
 @[simp] theorem zero_pow {a:Nat}(h:a≠0) : 0 ^ a = 0 := by
   cases a
   case _ => contradiction

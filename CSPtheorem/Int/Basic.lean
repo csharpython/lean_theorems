@@ -20,8 +20,8 @@ theorem neg_inj {a b:Int} : -a = -b ↔ a = b := ⟨λh↦by rw[←neg_neg a,←
 @[simp]theorem sub_self (a:Int) : a-a=0 := by
   rw[←add_neg_eq_sub,←add_def]
   match a with
-  | 0 => simp[neg_zero,Int.add]
-  | ofNat (Nat.succ _) => simp[←negOfNat_def,←negSucc_def,Int.add,subNatNat]
+  | 0 => simp [neg_zero,Int.add]
+  | ofNat (_+1) => simp[←negOfNat_def,←negSucc_def,Int.add,subNatNat]
   | negSucc _ =>
     rw[negSucc_def,negOfNat_def,neg_neg,←negOfNat_def,←negSucc_def,Int.add]
     simp[subNatNat,int_zero_eq_nat_zero]
@@ -40,9 +40,7 @@ theorem sub_eq_neg_sub_neg {a b:Int} : a-b=(-b)-(-a) := by simp[←add_neg_eq_su
 
 theorem subNatNat_eq_sub {a b:Nat} : subNatNat a b = a - b := by cases b <;> simp[←add_neg_eq_sub,←negOfNat_def,←negSucc_def] <;> rfl
 
-@[simp]theorem subNatNat_add_left {a b:Nat} : subNatNat (a+b) a = b := by
-  rw[subNatNat,Nat.sub_eq_zero_of_le,Nat.add_sub_cancel_left]
-  exact Nat.le_add_right _ _
+@[simp]theorem subNatNat_add_left {a b:Nat} : subNatNat (a+b) a = b := by rw[subNatNat,Nat.sub_eq_zero_of_le (Nat.le_add_right _ _),Nat.add_sub_cancel_left]
 @[simp]theorem subNatNat_add_right {a b:Nat} : subNatNat (a+b) b = a := by rw[Nat.add_comm,subNatNat_add_left]
 @[simp]theorem subNatNat_add_add {a b c:Nat} : subNatNat (a+c) (b+c) = subNatNat a b := by simp[subNatNat,Nat.add_sub_add_right]
 theorem subNatNat_sub {c:Nat}(h:b≤a) : subNatNat (a-b) c=subNatNat a (b+c) := by
